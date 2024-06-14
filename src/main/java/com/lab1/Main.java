@@ -7,7 +7,7 @@ import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
-
+import org.junit.Test;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +18,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 // void main(…)：主程序入口，接收用户输入文件，生成图，并允许用户选择后续各项功能
 // void showDirectedGraph(type G, …)：展示有向图
@@ -54,7 +57,7 @@ public class Main {
         // 获取整个图形的尺寸
         graphComponent.getGraphControl().updatePreferredSize();
         // 创建图像缓冲区
-        BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null, graphComponent.getCanvas());
+        BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, Color.WHITE, true, null, graphComponent.getCanvas());
         File file = new File(path);
         if (image != null) {
             // 保存图像到文件
@@ -93,21 +96,21 @@ public class Main {
         if(set1.isEmpty()) {
             return "No bridge words from "+ word1 +" to " + word2 + "!";
         }
-        String r = "The bridge words from " + word1 + " to " + word2 + " ";
+        StringBuilder r = new StringBuilder("The bridge words from " + word1 + " to " + word2 + " ");
         if(set1.size() == 1) {
             return r + "is: " + graph.words.get(set1.iterator().next());
         } else {
-            r += "are: ";
+            r.append("are: ");
             int p = 0;
             for(int i : set1) {
                 if(p == set1.size() - 1) {
-                    r += "and " + graph.words.get(i) + ".";
+                    r.append("and ").append(graph.words.get(i)).append(".");
                 } else {
-                    r += graph.words.get(i) + ", ";
+                    r.append(graph.words.get(i)).append(", ");
                 }
                 p++;
             }
-            return r;
+            return r.toString();
         }
     }
 
@@ -148,11 +151,11 @@ public class Main {
 
         }
         u.add(t[t.length - 1]);
-        String r = "";
+        StringBuilder r = new StringBuilder();
         for(String s : u) {
-            r += s + " ";
+            r.append(s).append(" ");
         }
-        return r;
+        return r.toString();
     }
 
     /* impl by zyc */
@@ -175,7 +178,7 @@ public class Main {
             System.out.println("No " + origin + " in the graph!");
         }
         for (int i = 0; i< graph.words.size();i++){
-            if (graph.words.get(i)==origin){
+            if (Objects.equals(graph.words.get(i), origin)){
                 continue;
             }else{
                 String ret = calcShortestPath(origin,graph.words.get(i));
@@ -245,46 +248,47 @@ public class Main {
                 }
             }
         }
-        System.out.println("----------------------------------");
-        System.out.println("---___最短路径数组，-1表示不可达___---");
-        System.out.println("----------------------------------");
+        // System.out.println("----------------------------------");
+        // System.out.println("---___最短路径数组，-1表示不可达___---");
+        // System.out.println("----------------------------------");
         for (int i = 0; i < v; i++) {
             for (int j = 0; j < v; j++) {
-                System.out.print(distance[i][j] + " ");
+           //     System.out.print(distance[i][j] + " ");
             }
-            System.out.println();
+           // System.out.println();
         }
-        System.out.println("----------------------------------");
-        System.out.println("---___最短路径方位，-1表示不可达___---");
-        System.out.println("----------------------------------");
+        // System.out.println("----------------------------------");
+        // System.out.println("---___最短路径方位，-1表示不可达___---");
+        // System.out.println("----------------------------------");
         for (int i = 0; i < v; i++) {
             for (int j = 0; j < v; j++) {
-                System.out.print(directions[i][j] + " ");
+           //      System.out.print(directions[i][j] + " ");
             }
-            System.out.println();
+            // System.out.println();
         }
 
-        System.out.println("---------------------------------------");
-        System.out.println("---___显示从words1到达words2的最短路径___---");
-        System.out.println("---------------------------------------");
+        // System.out.println("---------------------------------------");
+        // System.out.println("---___显示从words1到达words2的最短路径___---");
+        // System.out.println("---------------------------------------");
         Vector<Integer> words = new Vector<>();
         if (distance[index1][index2] == -1) {
             System.out.println(word1+" can not get to "+word2);
+            return word1+" can not get to "+word2;
         }else{
             int temp = directions[index1][index2];
             getList(words,temp,index2,directions);
             getList(words,index1,temp,directions);
         }
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         for (int i = 0; i < words.size(); i++) {
             int temp = words.get(words.size()-1-i);
             // System.out.print( get_string_by_id(temp)+ "->");
-            ret += graph.words.get(temp);//get_string_by_id(temp);
-            ret += "->";
+            ret.append(graph.words.get(temp));//get_string_by_id(temp);
+            ret.append("->");
         }
         // System.out.println(get_string_by_id(index2));
-        ret += graph.words.get(index2);//get_string_by_id(index2);
-        return ret;
+        ret.append(graph.words.get(index2));//get_string_by_id(index2);
+        return ret.toString();
     }
 
     /* impl by zyc */
@@ -295,11 +299,11 @@ public class Main {
         int random = rand.nextInt(v);
         System.out.println("Randomly Select node: "+ graph.words.get(random));
         int nodeId = random;
-        String r = "";
+        StringBuilder r = new StringBuilder();
         boolean[][] visited = new boolean[v][v];
         while(true) {
             synchronized (stopLock) {
-                r += graph.words.get(nodeId) + " ";
+                r.append(graph.words.get(nodeId)).append(" ");
                 if(stopLock == 1) {
                     System.out.println("Interrupted by User , stop walk NOW!!");
                     break;
@@ -330,10 +334,10 @@ public class Main {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                return r;
+                return r.toString();
             }
         }
-        return r;
+        return r.toString();
     }
 
     private String[] praseString(String str) {
@@ -515,7 +519,82 @@ public class Main {
         // 设置窗体可见
         frame.setVisible(true);
     }
-
+    public int evaluate(String expression) {
+        int sum = 0;
+        for (String summ: expression.split("\\+")){
+            sum += Integer.valueOf(summ);
+        }
+        return sum;
+    }
+    
+    @Test
+    public void calcShortestPathTest_Black_Box1() {
+        Main main = new Main();
+        // main.
+        // Create a known graph structure
+        String[] words = {"hello", "bridge", "world"};
+        main.graph = new Digraph(words);
+        
+        // Test case 1: Path from "hello" to "world"
+        String ret = main.calcShortestPath("hello", "world");
+        assertEquals("hello->bridge->world", ret);
+        
+    }
+    @Test
+    public void calcShortestPathTest_Black_Box2(){
+        Main main = new Main();
+        // main.
+        // Create a known graph structure
+        String[] words = {"hello", "bridge", "world"};
+        main.graph = new Digraph(words);
+        // Test case 2: Path from "world" to "hello" (should be no path)
+        String ret = main.calcShortestPath("world", "hello");
+        assertEquals("world can not get to hello", ret);
+        
+    }
+    @Test
+    public void calcShortestPathTest_Black_Box3(){
+        Main main = new Main();
+        // main.
+        // Create a known graph structure
+        String[] words = {"hello", "bridge", "world"};
+        main.graph = new Digraph(words);
+        
+        // Test case 2: Path from "hello" to "bridge"
+        String ret = main.calcShortestPath("hello", "bridge");
+        assertEquals("hello->bridge", ret);
+        
+        
+    }
+    @Test
+    public void calcShortestPathTest_Black_Box4(){
+        Main main = new Main();
+        // main.
+        // Create a known graph structure
+        String[] words = {"hello", "bridge", "world"};
+        main.graph = new Digraph(words);
+        
+        // Test case 4: Path from "hello" to "world"
+        String ret = main.calcShortestPath("A", "world");
+        assertEquals("No A or world in the graph!", ret);
+    }
+    
+    @Test
+    public void randomWalkTest_Black_Box() {
+        Main main = new Main();
+        String[] words = {"hello", "bridge", "world"};
+        main.graph = new Digraph(words);
+        String ret = main.randomWalk();
+        
+        Set<String> expectedOutputs = new HashSet<>();
+        expectedOutputs.add("hello bridge world ");
+        expectedOutputs.add("bridge world ");
+        expectedOutputs.add("world ");
+        
+        // 添加更多可能的输出
+        
+        assertTrue(expectedOutputs.contains(ret));
+    }
 }
 
 class Digraph {
@@ -562,7 +641,7 @@ class Digraph {
         try {
             Object[] oList = new Object[V];
             for(String s : map.keySet()) {
-                oList[map.get(s)] = graph.insertVertex(parent, null, s, 50, 50, 25, 20);;
+                oList[map.get(s)] = graph.insertVertex(parent, null, s, 50, 50, 25, 20);
             }
             for(int i = 0;i < V;i++) {
                 for(int j = 0;j < V;j++) {

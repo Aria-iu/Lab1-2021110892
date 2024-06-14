@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FindBugs-IDEA">
+    <plugins>
+      <plugin id="com.h3xstream.findsecbugs" enabled="true" bundled="true" />
+    </plugins>
+    <detectors>
+      <detector name="BadAppletConstructor" enabled="true" />
+      <detector name="CallToUnsupportedMethod" enabled="true" />
+      <detector name="CheckExpectedWarnings" enabled="true" />
+    </detectors>
+  </component>
+</project>
